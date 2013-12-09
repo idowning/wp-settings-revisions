@@ -102,20 +102,61 @@ var SettingsRevisionsMetaControl = (function ($) {
 			field_inputs.comment.on( 'input', function () {
 				update_state({comment: this.value});
 			}).triggerHandler('input');
-
+			
 			// set: control.setting.set('food');
 			// get: control.setting();
 
 			/**
 			 * Listen for changes to settings
 			 */
+			var settings_before_change 	= customize.settings.settings;
+			var comment_before_change	= field_inputs.comment.attr('value');
+			var changed_settings_array 	= new Array();
+			//change comment value 
+			//field_inputs.comment.attr( 'value', 'new value comment' );
+			//console.log(customize.settings.settings);
+			/* I now have both the default value of the revision coment field 
+			and the settings object showing what setting has what value.
+			Now I need be able to connect with a change event for each setting
+			and add a lable name of it to the comment field.
+			 */
+			 
+			 //value as it changes revision_select.context.activeElement.value
+			 //get active element i.e. input of what is being changed revision_select.context.activeElement
+			
+			
+					 
 			customize.bind( 'change', function () {
 				var selected_index = revision_select.prop('selectedIndex');
 				var selected_option = $(revision_select[0].options[selected_index]);
+				var comment_after_change = field_inputs.comment.attr('value');
 				
+				//gets name of field being changed
+				/* Need to figure out what to do with items not selected with this object call
+				Currently "Featured Content" doesn't used the same object scheme so is throwing
+				an error when selected*/				
+				var revised_field = revision_select.context.activeElement.attributes[2].value;
+								
+				//clear out current comment field state.
+				if(comment_before_change == comment_after_change){
+					field_inputs.comment.attr( 'value', 'Changed: ' );
+				}
+				
+				var revised_in_array_result = jQuery.inArray( revised_field, changed_settings_array );
+				
+				//check if value change is already in array
+				//if not part of the array add it to the array and append it to the comment form
+				if( revised_in_array_result == -1 ){
+					comment_after_change = field_inputs.comment.attr('value');
+					comment_after_change = comment_after_change + ' ' + revised_field + ', ';
+					field_inputs.comment.attr('value', comment_after_change);
+					changed_settings_array.push(revised_field);
+				}
+								
 				if ( ! is_restoring_snapshot ) {
 					if ( state.post_id !== null ) {
-						var new_revision_option = new Option();
+						var new_revision_option = new Option();	
+											
 						new_revision_option.text = self.l10n.new_option_text_format.replace(/%s/, selected_option.prop('text'));
 						new_revision_option.value = '';
 						revision_select.prepend(new_revision_option);
@@ -141,12 +182,15 @@ var SettingsRevisionsMetaControl = (function ($) {
 					revision_select.find('option[value=""]').remove();
 				}
 			});
+			
+			
 
-			customize.bind( 'save', function () {
+			customize.bind( 'save', function () {			
 				revision_select.prop( 'disabled', true );
 			});
 
 			customize.bind( 'saved', function () {
+				
 				var post_ids = revision_select.find('option[value!=""]')
 					.map(function () {
 						return +$(this).data('post_id');
