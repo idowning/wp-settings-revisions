@@ -112,24 +112,12 @@ var SettingsRevisionsMetaControl = (function ($) {
 			var settings_before_change 	= customize.settings.settings;
 			var comment_before_change	= field_inputs.comment.attr('value');
 			var changed_settings_array 	= new Array();
-			//change comment value 
-			//field_inputs.comment.attr( 'value', 'new value comment' );
-			//console.log(customize.settings.settings);
-			/* I now have both the default value of the revision coment field 
-			and the settings object showing what setting has what value.
-			Now I need be able to connect with a change event for each setting
-			and add a lable name of it to the comment field.
-			 */
-			 
-			 //value as it changes revision_select.context.activeElement.value
-			 //get active element i.e. input of what is being changed revision_select.context.activeElement
-			
-			
-					 
+							 
 			customize.bind( 'change', function () {
 				var selected_index = revision_select.prop('selectedIndex');
 				var selected_option = $(revision_select[0].options[selected_index]);
 				var comment_after_change = field_inputs.comment.attr('value');
+				var revised_in_array_result = jQuery.inArray( revised_field, changed_settings_array );
 				
 				//gets name of field being changed
 				/* Need to figure out what to do with items not selected with this object call
@@ -141,8 +129,6 @@ var SettingsRevisionsMetaControl = (function ($) {
 				if(comment_before_change == comment_after_change){
 					field_inputs.comment.attr( 'value', 'Changed: ' );
 				}
-				
-				var revised_in_array_result = jQuery.inArray( revised_field, changed_settings_array );
 				
 				//check if value change is already in array
 				//if not part of the array add it to the array and append it to the comment form
